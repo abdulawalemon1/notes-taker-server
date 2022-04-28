@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 
@@ -51,7 +51,7 @@ async function run() {
          * 
          */
         app.post('/note', async (req, res) => {
-            const data = req.body
+            const data = req.body;
             console.log(data);
 
 
@@ -61,6 +61,25 @@ async function run() {
 
 
         //update notesTaker
+        app.put('/note/:id', async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+            console.log('from update method', data);
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+
+                    userName: data.userName,
+                    textData: data.textData,
+
+                },
+
+            };
+            const result = await notesCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
 
 
 
